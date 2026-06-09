@@ -1,0 +1,336 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ENUMS
+
+// User roles
+enum UserRole {
+  ADMIN     // Owner of projects who can create projects and assign operators
+  OPERATOR  // Assigned support agents who chat with customers
+}
+
+// Tiers for custom subscription plan checks
+enum SubscriptionPlan {
+  FREE
+  PRO
+}
+
+// Transaction billing states
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+  INACTIVE
+}
+
+// Support ticket states for lifecycle workflow
+enum ConversationStatus {
+  UNASSIGNED  // New customer ticket created, waiting for first action
+  UNRESOLVED  // Ticket is active, customer is chatting with the AI agent
+  ESCALATED   // AI is paused, control is handed over to human operators
+  RESOLVED    // Ticket is closed/resolved, widget and dashboard inputs are locked
+}
+
+// Sender identity of individual chat bubbles
+enum MessageRole {
+  USER       // Customer / Web Visitor
+  ASSISTANT  // Support Operator or AI Agent response
+  SYSTEM     // System logs (e.g. "Conversation resolved")
+  TOOL       // AI search tool metadata payloads
+}
+
+// Uploaded file ingestion processing stages
+enum KnowledgeBaseEntryStatus {
+  PENDING    // File is uploaded, waiting to extract text and embed vectors
+  READY      // Vectors created, document ready for semantic search searches
+  ERROR      // Document extraction failed
+}
+
+
+// AUTHENTICATION & TEAM MODELS
+
+// Model for dashboard users (Admins & Operators)
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique // Unique login identifier
+  name          String    // Display name
+  passwordHash  String    // Bcrypt password hash for custom login flow
+  role          UserRole  @default(ADMIN) // Global fallback user role
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  createdProjects Project[] @relation("CreatedProjects") // Projects created by this user
+  projectAssignments   ProjectAssignment[] // Project team assignments
+  subscription  Subscription? // Active billing setup for this project
+  assignedConversations Conversation[] @relation("AssignedConversations")  // Conversations assigned to this operator
+
+  @@map("users")
+}
+
+
+// PROJECT & ORGANIZATION ISOLATION
+
+// Project workspace boundary (replaces Clerk organization tenant limits)
+model Project {
+  id          String   @id @default(cuid())
+  name        String   // Workspace brand name
+  creatorId   String   // The Admin who created this workspace
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  creator     User     @relation("CreatedProjects", fields: [creatorId], references: [id])
+  operators   ProjectAssignment[] // List of assigned operators who can access this project
+  widgetSettings WidgetSettings? // Visual customization preferences
+  contactSessions ContactSession[] // Anonymous customer sessions
+  conversations Conversation[] // Active support tickets
+  threads       Thread[] // Chat thread containers
+  knowledgeEntries KnowledgeBaseEntry[] // Ingested documents (RAG)
+  storageFiles StorageFile[] // Cloud file attachment records
+
+  @@map("projects")
+}
+
+// Links operators to specific projects
+model ProjectAssignment {
+  id          String   @id @default(cuid())
+  projectId   String
+  userId      String   // Operator User ID
+  assignedAt  DateTime @default(now())
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_assignments")
+}
+
+
+// INTERNAL BILLING & SUBSCRIPTIONS
+model Subscription {
+  id             String             @id @default(cuid())
+
+  userId         String             @unique
+
+  plan           SubscriptionPlan   @default(FREE)
+
+  status         SubscriptionStatus @default(INACTIVE)
+
+  // Maximum projects allowed under current subscription
+  maxProjects    Int @default(2)
+
+  // Maximum operators allowed under current subscription
+  maxOperators   Int @default(1)
+
+  // Subscription validity
+  expiresAt      DateTime?
+
+  // Razorpay subscription id
+  razorpaySubscriptionId String? @unique
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+
+  @@map("subscriptions")
+}
+
+// WIDGET CONFIGURATION
+
+// Customizable settings for the website-embedded chat widget
+model WidgetSettings {
+  id             String   @id @default(cuid())
+  projectId      String   @unique
+  greetMessage   String   // First message shown to the customer when starting a chat
+  suggestions    String[]    @default([])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("widget_settings")
+}
+
+// SUPPORT TICKETS & CHATS
+
+// Anonymous guest customer profile (visitor session) created on widget load
+model ContactSession {
+  id             String   @id @default(cuid())
+  projectId      String
+  name           String   // Captured name of the customer
+  email          String   // Captured email of the customer
+  expiresAt      DateTime // 24-hour expiration checks
+  metadata       Json?    // Silent metadata capture (Browser, OS, Geolocation)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+
+  @@index([projectId])
+  @@index([expiresAt])
+  @@index([email])
+  @@map("contact_sessions")
+}
+
+// Support ticket tracking the lifecycle, status, and target thread
+model Conversation {
+  id                 String             @id @default(cuid())
+
+  projectId          String
+  contactSessionId   String
+
+  // Operator currently handling this ticket
+  assignedOperatorId String?
+
+  // Linked chat thread
+  threadId           String             @unique
+
+  status             ConversationStatus @default(UNASSIGNED)
+
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  project            Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  contactSession     ContactSession @relation(fields: [contactSessionId],references: [id],onDelete:Restrict)
+
+  thread             Thread @relation(fields: [threadId],references: [id],onDelete: Cascade)
+
+  assignedOperator   User? @relation("AssignedConversations",fields: [assignedOperatorId],references: [id],onDelete: SetNull)
+
+  @@index([assignedOperatorId])
+  @@index([projectId, createdAt(sort: Desc)])
+  @@index([status, projectId, createdAt(sort: Desc)])
+
+  @@map("conversations")
+}
+
+// Container grouping messages inside the chat window
+model Thread {
+  id             String       @id @default(cuid())
+  projectId      String
+  title          String?      // Optional thread name/topic
+  summary        String?      @db.Text // AI generated chat summary log
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  project        Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  conversation   Conversation?
+  messages       Message[]
+
+  @@index([projectId])
+  @@map("threads")
+}
+
+// Individual text bubbles inside the Thread
+model Message {
+  id          String      @id @default(cuid())
+  threadId    String
+  role        MessageRole
+  textContent String?     @db.Text // Plaintext message body
+  payload     Json?       // AI SDK payload containing details like tool calls
+  agentName   String?     // Display name of replying operator (if not sent by AI/user)
+  createdAt   DateTime    @default(now())
+
+  thread      Thread      @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt(sort: Asc)])
+  @@map("messages")
+}
+
+
+// KNOWLEDGE BASE (Vector Search Documents)
+
+// FILE STORAGE (CLOUDINARY)
+model StorageFile {
+  id            String   @id @default(cuid())
+
+  projectId     String
+
+  filename      String  // Original uploaded filename
+  mimeType      String
+  sizeBytes     BigInt  // File size in bytes
+
+  // Cloudinary
+  publicId      String   @unique
+  secureUrl     String   @db.Text
+
+  createdAt     DateTime @default(now())
+
+  project        Project @relation(fields: [projectId],references: [id],onDelete: Cascade)
+
+  knowledgeEntries KnowledgeBaseEntry[]
+
+  @@index([projectId])
+
+  @@map("storage_files")
+}
+
+// KNOWLEDGE BASE ENTRY
+
+model KnowledgeBaseEntry {
+  id             String                   @id @default(cuid())
+
+  projectId      String
+
+  storageFileId  String?
+
+  filename       String
+
+  // Duplicate PDF Detection
+  contentHash    String? 
+
+  category       String?  // File category
+
+  status         KnowledgeBaseEntryStatus @default(PENDING)
+
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+
+  project        Project @relation(fields: [projectId],references: [id],onDelete: Cascade)
+
+  storageFile    StorageFile? @relation(fields: [storageFileId],references: [id],onDelete: SetNull)
+
+  chunks         KnowledgeBaseChunk[]
+
+  @@unique([projectId, contentHash])
+
+  @@index([projectId, status])
+
+  @@map("knowledge_base_entries")
+}
+
+// KNOWLEDGE BASE CHUNKS
+
+model KnowledgeBaseChunk {
+  id          String   @id @default(cuid())
+
+  entryId     String
+
+  chunkIndex  Int
+
+  content     String   @db.Text
+
+  qdrantPointId  String?  @unique
+
+  createdAt   DateTime @default(now())
+
+  entry        KnowledgeBaseEntry @relation(fields: [entryId],references: [id],onDelete: Cascade)
+
+  @@unique([entryId, chunkIndex])
+
+  @@map("knowledge_base_chunks")
+}
