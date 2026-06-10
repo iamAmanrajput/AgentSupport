@@ -1,7 +1,4 @@
 -- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'OPERATOR');
-
--- CreateEnum
 CREATE TYPE "SubscriptionPlan" AS ENUM ('FREE', 'PRO');
 
 -- CreateEnum
@@ -16,26 +13,44 @@ CREATE TYPE "MessageRole" AS ENUM ('USER', 'ASSISTANT', 'SYSTEM', 'TOOL');
 -- CreateEnum
 CREATE TYPE "KnowledgeBaseEntryStatus" AS ENUM ('PENDING', 'READY', 'ERROR');
 
+-- CreateEnum
+CREATE TYPE "InviteStatus" AS ENUM ('PENDING', 'ACCEPTED');
+
 -- CreateTable
-CREATE TABLE "users" (
+CREATE TABLE "admins" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
-    "role" "UserRole" NOT NULL DEFAULT 'ADMIN',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "admins_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "operators" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "status" "InviteStatus" NOT NULL DEFAULT 'PENDING',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "adminId" TEXT NOT NULL,
+
+    CONSTRAINT "operators_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "projects" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "creatorId" TEXT NOT NULL,
+    "widgetToken" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "creatorId" TEXT NOT NULL,
 
     CONSTRAINT "projects_pkey" PRIMARY KEY ("id")
 );
@@ -44,7 +59,7 @@ CREATE TABLE "projects" (
 CREATE TABLE "project_assignments" (
     "id" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "operatorId" TEXT NOT NULL,
     "assignedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "project_assignments_pkey" PRIMARY KEY ("id")
@@ -53,7 +68,7 @@ CREATE TABLE "project_assignments" (
 -- CreateTable
 CREATE TABLE "subscriptions" (
     "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "adminId" TEXT NOT NULL,
     "plan" "SubscriptionPlan" NOT NULL DEFAULT 'FREE',
     "status" "SubscriptionStatus" NOT NULL DEFAULT 'INACTIVE',
     "maxProjects" INTEGER NOT NULL DEFAULT 2,
@@ -97,9 +112,9 @@ CREATE TABLE "conversations" (
     "id" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
     "contactSessionId" TEXT NOT NULL,
-    "assignedOperatorId" TEXT,
     "threadId" TEXT NOT NULL,
     "status" "ConversationStatus" NOT NULL DEFAULT 'UNASSIGNED',
+    "assignedOperatorId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -173,13 +188,31 @@ CREATE TABLE "knowledge_base_chunks" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+CREATE UNIQUE INDEX "admins_email_key" ON "admins"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "project_assignments_projectId_userId_key" ON "project_assignments"("projectId", "userId");
+CREATE UNIQUE INDEX "operators_email_key" ON "operators"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "subscriptions_userId_key" ON "subscriptions"("userId");
+CREATE UNIQUE INDEX "operators_token_key" ON "operators"("token");
+
+-- CreateIndex
+CREATE INDEX "operators_adminId_idx" ON "operators"("adminId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "projects_widgetToken_key" ON "projects"("widgetToken");
+
+-- CreateIndex
+CREATE INDEX "projects_creatorId_idx" ON "projects"("creatorId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "projects_creatorId_name_key" ON "projects"("creatorId", "name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "project_assignments_projectId_operatorId_key" ON "project_assignments"("projectId", "operatorId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "subscriptions_adminId_key" ON "subscriptions"("adminId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "subscriptions_razorpaySubscriptionId_key" ON "subscriptions"("razorpaySubscriptionId");
@@ -236,16 +269,19 @@ CREATE UNIQUE INDEX "knowledge_base_chunks_qdrantPointId_key" ON "knowledge_base
 CREATE UNIQUE INDEX "knowledge_base_chunks_entryId_chunkIndex_key" ON "knowledge_base_chunks"("entryId", "chunkIndex");
 
 -- AddForeignKey
-ALTER TABLE "projects" ADD CONSTRAINT "projects_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "operators" ADD CONSTRAINT "operators_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "admins"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "projects" ADD CONSTRAINT "projects_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "admins"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "project_assignments" ADD CONSTRAINT "project_assignments_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "project_assignments" ADD CONSTRAINT "project_assignments_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "project_assignments" ADD CONSTRAINT "project_assignments_operatorId_fkey" FOREIGN KEY ("operatorId") REFERENCES "operators"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "admins"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "widget_settings" ADD CONSTRAINT "widget_settings_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -263,7 +299,7 @@ ALTER TABLE "conversations" ADD CONSTRAINT "conversations_contactSessionId_fkey"
 ALTER TABLE "conversations" ADD CONSTRAINT "conversations_threadId_fkey" FOREIGN KEY ("threadId") REFERENCES "threads"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "conversations" ADD CONSTRAINT "conversations_assignedOperatorId_fkey" FOREIGN KEY ("assignedOperatorId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "conversations" ADD CONSTRAINT "conversations_assignedOperatorId_fkey" FOREIGN KEY ("assignedOperatorId") REFERENCES "operators"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "threads" ADD CONSTRAINT "threads_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "projects"("id") ON DELETE CASCADE ON UPDATE CASCADE;
