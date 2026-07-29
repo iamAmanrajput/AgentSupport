@@ -1,12 +1,7 @@
-import { AuthWrapper } from "@/components/auth/ui/components/AuthWrapper"
-import { OrganizationWrapper } from "@/components/auth/ui/components/OrganizationWrapper"
+import DashboardLayout from "@/components/dashboard/ui/layouts/dashboard-layout";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <AuthWrapper>
-      <OrganizationWrapper>{children}</OrganizationWrapper>
-    </AuthWrapper>
-  )
-}
+  return <DashboardLayout>{children}</DashboardLayout>;
+};
 
-export default Layout
+export default Layout;
