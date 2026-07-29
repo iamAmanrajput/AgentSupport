@@ -1,19 +1,28 @@
-import { Button } from "@workspace/ui/components/button"
+"use client";
+import { useVapi } from "@/components/widget/hooks/useVapi";
+import { Button } from "@workspace/ui/components/button";
 
 export default function Page() {
+  const {
+    isSpeaking,
+    isConnecting,
+    isConnected,
+    transcript,
+    startCall,
+    endCall,
+  } = useVapi();
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="text-muted-foreground font-mono text-xs">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
+    <div className="mx-auto flex min-h-svh w-full max-w-md flex-col items-center justify-center">
+      <Button onClick={() => startCall()}>Start call</Button>
+
+      <Button onClick={() => endCall()} variant="destructive">
+        End call
+      </Button>
+
+      <p>isConnected: {`${isConnected}`}</p>
+      <p>isConnecting: {`${isConnecting}`}</p>
+      <p>isSpeaking: {`${isSpeaking}`}</p>
+      <p>{JSON.stringify(transcript, null, 2)}</p>
     </div>
-  )
+  );
 }
