@@ -1,9 +1,13 @@
 import { AuthWrapper } from "@/components/auth/ui/components/AuthWrapper";
 import { OrganizationWrapper } from "@/components/auth/ui/components/OrganizationWrapper";
-import { SidebarProvider } from "@workspace/ui/components/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@workspace/ui/components/sidebar";
 import { cookies } from "next/headers";
 import React from "react";
 import DashboardSidebar from "../components/dashboard-sidebar";
+import StoreProvider from "@/components/StoreProvider";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const cookieStore = await cookies();
@@ -11,10 +15,13 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthWrapper>
       <OrganizationWrapper>
-        <SidebarProvider defaultOpen={defaultOpen}>
-          <DashboardSidebar />
-          <main className="flex flex-1 flex-col">{children}</main>
-        </SidebarProvider>
+        <StoreProvider>
+          <SidebarProvider defaultOpen={defaultOpen}>
+            <DashboardSidebar />
+            {/* <main className="flex flex-1 flex-col">{children}</main> */}
+            <SidebarInset>{children}</SidebarInset>
+          </SidebarProvider>
+        </StoreProvider>
       </OrganizationWrapper>
     </AuthWrapper>
   );
