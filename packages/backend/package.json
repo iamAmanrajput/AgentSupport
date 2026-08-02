@@ -18,6 +18,7 @@
     "@ai-sdk/groq": "3.0.52",
     "@clerk/nextjs": "^7.6.2",
     "@convex-dev/agent": "^0.6.4",
+    "@convex-dev/agent-playground": "^0.0.20",
     "@convex-dev/rag": "^0.7.5",
     "add": "^2.0.9",
     "ai": "6.0.238",
