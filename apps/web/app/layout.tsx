@@ -4,6 +4,7 @@ import "@workspace/ui/globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "@workspace/ui/components/toast";
 
 const fontSans = Outfit({
   subsets: ["latin"],
@@ -24,7 +25,10 @@ export default function RootLayout({
       <body>
         <ClerkProvider>
           <ConvexClientProvider>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              {children}
+              <Toaster />
+            </ThemeProvider>
           </ConvexClientProvider>
         </ClerkProvider>
       </body>

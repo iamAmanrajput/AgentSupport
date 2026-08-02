@@ -1,21 +1,22 @@
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono } from "next/font/google";
 
-import "@workspace/ui/globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@workspace/ui/lib/utils"
-import { ConvexClientProvider } from "@/components/ConvexClientProvider"
+import "@workspace/ui/globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { cn } from "@workspace/ui/lib/utils";
+import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+import StoreProvider from "@/components/StoreProvider";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-})
+});
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html
@@ -29,10 +30,12 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ConvexClientProvider>
-          <ThemeProvider>{children}</ThemeProvider>
-        </ConvexClientProvider>
+        <StoreProvider>
+          <ConvexClientProvider>
+            <ThemeProvider>{children}</ThemeProvider>
+          </ConvexClientProvider>
+        </StoreProvider>
       </body>
     </html>
-  )
+  );
 }
