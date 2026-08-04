@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { WidgetHeader } from "../components/WidgetHeader";
 import { LoaderIcon } from "lucide-react";
-import { useAction, useMutation } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import {
   selectContactSessionIdByOrg,
@@ -10,6 +10,7 @@ import {
   setLoadingMessage,
   setOrganizationId,
   setScreen,
+  setWidgetSettings,
 } from "@/redux/slices/widgetSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
@@ -78,7 +79,7 @@ const WidgetLoadingScreen = ({
 
     if (!contactSessionId) {
       setSessionValid(false);
-      setStep("done");
+      setStep("settings");
       return;
     }
 
@@ -89,8 +90,7 @@ const WidgetLoadingScreen = ({
     })
       .then((result) => {
         setSessionValid(result.valid);
-        // this is just for testing please uncoomit below line and comment dispatch
-        // setStep("settings");
+        setStep("settings");
         dispatch(setScreen("selection"));
       })
       .catch(() => {
@@ -98,6 +98,28 @@ const WidgetLoadingScreen = ({
         setStep("settings");
       });
   }, [step, contactSessionId, validateContactSession, dispatch]);
+
+  // Step 3: Load Widget Settings
+  const widgetSettings = useQuery(
+    api.public.widgetSettings.getByOrganizationId,
+    organizationId
+      ? {
+          organizationId,
+        }
+      : "skip"
+  );
+  useEffect(() => {
+    if (step !== "settings") {
+      return;
+    }
+
+    setLoadingMessage("Loading widget settings...");
+
+    if (widgetSettings !== undefined) {
+      dispatch(setWidgetSettings(widgetSettings));
+      setStep("vapi");
+    }
+  }, [step, widgetSettings, setStep, dispatch]);
 
   useEffect(() => {
     if (step !== "done") {
