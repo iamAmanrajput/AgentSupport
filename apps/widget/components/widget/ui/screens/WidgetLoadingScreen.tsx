@@ -10,6 +10,7 @@ import {
   setLoadingMessage,
   setOrganizationId,
   setScreen,
+  setVapiSecrets,
   setWidgetSettings,
 } from "@/redux/slices/widgetSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -120,6 +121,31 @@ const WidgetLoadingScreen = ({
       setStep("vapi");
     }
   }, [step, widgetSettings, setStep, dispatch]);
+
+  // Step 4: Load Vapi secrets (Optional)
+  const getVapiSecrets = useAction(api.public.secrets.getVapiSecrets);
+  useEffect(() => {
+    if (step !== "vapi") {
+      return;
+    }
+
+    if (!organizationId) {
+      dispatch(setErrorMessage("Organization ID is required"));
+      dispatch(setScreen("error"));
+      return;
+    }
+
+    dispatch(setLoadingMessage("Loading voice features..."));
+    getVapiSecrets({ organizationId })
+      .then((secrets) => {
+        dispatch(setVapiSecrets(secrets));
+        setStep("done");
+      })
+      .catch(() => {
+        dispatch(setVapiSecrets(null));
+        setStep("done");
+      });
+  }, [step, organizationId, getVapiSecrets, setStep, dispatch]);
 
   useEffect(() => {
     if (step !== "done") {

@@ -8,6 +8,7 @@ import WidgetSelectionScreen from "../screens/WidgetSelectionScreen";
 import { useAppSelector } from "@/redux/hooks";
 import WidgetChatScreen from "../screens/WidgetChatScreen";
 import WidgetInboxScreen from "../screens/WidgetInboxScreen";
+import { WidgetVoiceScreen } from "../screens/WidgetVoiceScreen";
 
 interface Props {
   organizationId: string;
@@ -20,7 +21,7 @@ const WidgetView = ({ organizationId }: Props) => {
     error: <WidgetErrorScreen />,
     loading: <WidgetLoadingScreen organizationId={organizationId} />,
     auth: <WidgetAuthScreen />,
-    voice: <p>TODO: Voice</p>,
+    voice: <WidgetVoiceScreen />,
     inbox: <WidgetInboxScreen />,
     selection: <WidgetSelectionScreen />,
     chat: <WidgetChatScreen />,

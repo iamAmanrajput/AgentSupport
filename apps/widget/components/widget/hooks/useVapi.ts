@@ -1,5 +1,6 @@
 import Vapi from "@vapi-ai/web";
 import { useEffect, useState } from "react";
+import { useAppSelector } from "@/redux/hooks";
 
 interface TranscriptMessage {
   role: "user" | "assistant";
@@ -7,6 +8,10 @@ interface TranscriptMessage {
 }
 
 export const useVapi = () => {
+  const { vapiSecrets, widgetSettings } = useAppSelector(
+    (state) => state.widget
+  );
+
   const [vapi, setVapi] = useState<Vapi | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -14,7 +19,11 @@ export const useVapi = () => {
   const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
 
   useEffect(() => {
-    const vapiInstance = new Vapi("a595e046-a5bf-4113-ae1d-62a245e4941c");
+    if (!vapiSecrets) {
+      return;
+    }
+
+    const vapiInstance = new Vapi(vapiSecrets.publicApiKey);
     setVapi(vapiInstance);
 
     vapiInstance.on("call-start", () => {
@@ -59,23 +68,14 @@ export const useVapi = () => {
     };
   }, []);
 
-  //   const startCall = () => {
-  //     if (!vapiSecrets || !widgetSettings?.vapiSettings?.assistantId) {
-  //       return
-  //     }
-  //     setIsConnecting(true)
-
-  //     if (vapi) {
-  //       vapi.start(widgetSettings.vapiSettings.assistantId)
-  //     }
-  //   }
-
   const startCall = () => {
+    if (!vapiSecrets || !widgetSettings?.vapiSettings?.assistantId) {
+      return;
+    }
     setIsConnecting(true);
 
     if (vapi) {
-      // Only for testing the Vapi API, otherwise customers will provide their own Assistant IDs
-      vapi.start("f770585e-d09b-4032-b19c-8db1e2bb5c69");
+      vapi.start(widgetSettings.vapiSettings.assistantId);
     }
   };
 
