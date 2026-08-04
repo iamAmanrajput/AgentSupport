@@ -15,7 +15,7 @@ export interface WidgetState {
 
   conversationId: Id<"conversations"> | null;
 
-  // widgetSettings: Doc<"widgetSettings"> | null;
+  widgetSettings: Doc<"widgetSettings"> | null;
 
   vapiSecrets: {
     publicApiKey: string;
@@ -33,7 +33,7 @@ const initialState: WidgetState = {
 
   conversationId: null,
 
-  // widgetSettings: null,
+  widgetSettings: null,
 
   vapiSecrets: null,
 };
@@ -127,12 +127,12 @@ const widgetSlice = createSlice({
       state.conversationId = action.payload;
     },
 
-    // setWidgetSettings: (
-    //   state,
-    //   action: PayloadAction<Doc<"widgetSettings"> | null>
-    // ) => {
-    //   state.widgetSettings = action.payload;
-    // },
+    setWidgetSettings: (
+      state,
+      action: PayloadAction<Doc<"widgetSettings"> | null>
+    ) => {
+      state.widgetSettings = action.payload;
+    },
 
     setVapiSecrets: (
       state,
@@ -152,7 +152,7 @@ export const {
   setErrorMessage,
   setLoadingMessage,
   setConversationId,
-  // setWidgetSettings,
+  setWidgetSettings,
   setVapiSecrets,
   hydrateContactSessions,
 } = widgetSlice.actions;
