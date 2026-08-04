@@ -16,15 +16,18 @@
   "dependencies": {
     "@ai-sdk/google": "3.0.103",
     "@ai-sdk/groq": "3.0.52",
+    "@aws-sdk/client-secrets-manager": "^3.1102.0",
     "@clerk/nextjs": "^7.6.2",
     "@convex-dev/agent": "^0.6.4",
     "@convex-dev/agent-playground": "^0.0.20",
     "@convex-dev/rag": "^0.7.5",
+    "@vapi-ai/server-sdk": "^1.2.0",
     "add": "^2.0.9",
     "ai": "6.0.238",
     "ai-sdk-ollama": "3.8.8",
     "convex": "^1.42.3",
     "convex-helpers": "^0.1.120",
+    "react-hook-form": "^7.83.0",
     "zod": "^4.4.3"
   }
 }
