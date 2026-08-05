@@ -32,7 +32,9 @@ export default function RootLayout({
       <body>
         <StoreProvider>
           <ConvexClientProvider>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              <div className="h-screen w-screen">{children}</div>
+            </ThemeProvider>
           </ConvexClientProvider>
         </StoreProvider>
       </body>

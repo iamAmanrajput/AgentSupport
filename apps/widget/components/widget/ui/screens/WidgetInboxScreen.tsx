@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { WidgetHeader } from "../components/WidgetHeader";
-import { AlertTriangleIcon, ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { WidgetFooter } from "../components/WidgetFooter";
 import { Button } from "@workspace/ui/components/button";

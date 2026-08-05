@@ -12,10 +12,6 @@ interface Props {
 const Page = ({ searchParams }: Props) => {
   const { organizationId } = use(searchParams);
 
-  if (!organizationId) {
-    return null;
-  }
-
   return <WidgetView organizationId={organizationId} />;
 };
 
