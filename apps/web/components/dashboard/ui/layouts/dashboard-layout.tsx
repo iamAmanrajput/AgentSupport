@@ -1,9 +1,6 @@
 import { AuthWrapper } from "@/components/auth/ui/components/AuthWrapper";
 import { OrganizationWrapper } from "@/components/auth/ui/components/OrganizationWrapper";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@workspace/ui/components/sidebar";
+import { SidebarProvider } from "@workspace/ui/components/sidebar";
 import { cookies } from "next/headers";
 import React from "react";
 import DashboardSidebar from "../components/dashboard-sidebar";
@@ -18,8 +15,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
         <StoreProvider>
           <SidebarProvider defaultOpen={defaultOpen}>
             <DashboardSidebar />
-            {/* <main className="flex flex-1 flex-col">{children}</main> */}
-            <SidebarInset>{children}</SidebarInset>
+            <main className="flex flex-1 flex-col">{children}</main>
           </SidebarProvider>
         </StoreProvider>
       </OrganizationWrapper>

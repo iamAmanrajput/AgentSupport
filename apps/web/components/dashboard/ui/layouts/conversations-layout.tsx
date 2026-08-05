@@ -11,15 +11,15 @@ interface ConversationsLayoutProps {
 
 export function ConversationsLayout({ children }: ConversationsLayoutProps) {
   return (
-    <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
+    <ResizablePanelGroup orientation="horizontal" className="h-full flex-1">
       <ResizablePanel defaultSize="30%" minSize="20%" maxSize="30%">
         <ConversationsPanel />
       </ResizablePanel>
 
       <ResizableHandle withHandle />
 
-      <ResizablePanel defaultSize="70%">
-        <div className="h-full">{children}</div>
+      <ResizablePanel className="h-full" defaultSize="70%">
+        {children}
       </ResizablePanel>
     </ResizablePanelGroup>
   );
