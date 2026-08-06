@@ -23,7 +23,13 @@ export default function RootLayout({
       className={`${fontSans.variable} antialiased`}
     >
       <body>
-        <ClerkProvider>
+        <ClerkProvider
+          appearance={{
+            variables: {
+              colorPrimary: "#3C82F6",
+            },
+          }}
+        >
           <ConvexClientProvider>
             <ThemeProvider>
               {children}

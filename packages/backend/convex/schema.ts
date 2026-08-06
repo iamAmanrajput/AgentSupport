@@ -61,7 +61,8 @@ export default defineSchema({
     .index("by_contact_session_id", ["contactSessionId"])
     .index("by_thread_id", ["threadId"])
     .index("by_status_and_organization_id", ["status", "organizationId"]),
-  users: defineTable({
-    name: v.string(),
-  }),
+  subscriptions: defineTable({
+    organizationId: v.string(),
+    status: v.string(),
+  }).index("by_organization_id", ["organizationId"]),
 });
