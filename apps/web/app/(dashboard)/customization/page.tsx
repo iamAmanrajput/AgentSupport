@@ -1,21 +1,19 @@
-// import { Protect } from "@clerk/nextjs";
-
-// import { PremiumFeatureOverlay } from "@/modules/billing/ui/components/premium-feature-overlay";
+import { PremiumFeatureOverlay } from "@/components/billing/ui/components/premium-feature-overlay";
 import { CustomizationView } from "@/components/customization/ui/views/customization-view";
+import { Show } from "@clerk/nextjs";
 
 const Page = () => {
   return (
-    // <Protect
-    //   condition={(has) => has({ plan: "pro" })}
-    //   fallback={
-    //     <PremiumFeatureOverlay>
-    //       <CustomizationView />
-    //     </PremiumFeatureOverlay>
-    //   }
-    // >
-    //   <CustomizationView />
-    // </Protect>
-    <CustomizationView />
+    <Show
+      when={{ plan: "pro" }}
+      fallback={
+        <PremiumFeatureOverlay>
+          <CustomizationView />
+        </PremiumFeatureOverlay>
+      }
+    >
+      <CustomizationView />
+    </Show>
   );
 };
 
