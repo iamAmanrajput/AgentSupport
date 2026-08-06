@@ -12,7 +12,6 @@ export const getMany = query({
   },
   handler: async (ctx, args) => {
     const contactSession = await ctx.db.get(args.contactSessionId);
-
     if (!contactSession || contactSession.expiresAt < Date.now()) {
       throw new ConvexError({
         code: "UNAUTHORIZED",
