@@ -4,6 +4,7 @@ import { action, mutation } from "../_generated/server";
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import { OPERATOR_MESSAGE_ENHANCEMENT_PROMPT } from "../system/ai/constants";
+import { internal } from "../_generated/api";
 
 export const enhanceResponse = action({
   args: {
@@ -28,19 +29,19 @@ export const enhanceResponse = action({
       });
     }
 
-    // const subscription = await ctx.runQuery(
-    //   internal.system.subscriptions.getByOrganizationId,
-    //   {
-    //     organizationId: orgId,
-    //   }
-    // );
+    const subscription = await ctx.runQuery(
+      internal.system.subscriptions.getByOrganizationId,
+      {
+        organizationId: orgId,
+      }
+    );
 
-    // if (subscription?.status !== "active") {
-    //   throw new ConvexError({
-    //     code: "BAD_REQUEST",
-    //     message: "Missing subscription",
-    //   });
-    // }
+    if (subscription?.status !== "active") {
+      throw new ConvexError({
+        code: "BAD_REQUEST",
+        message: "Missing subscription",
+      });
+    }
 
     const response = await generateText({
       // If Not Work Add Gemini

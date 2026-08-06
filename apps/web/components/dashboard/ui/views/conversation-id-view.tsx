@@ -7,14 +7,7 @@ import { api } from "@workspace/backend/_generated/api";
 import { Id } from "@workspace/backend/_generated/dataModel";
 import { Button } from "@workspace/ui/components/button";
 import { useAction, useMutation, useQuery } from "convex/react";
-import {
-  MoreHorizontalIcon,
-  SendHorizonalIcon,
-  SendHorizontal,
-  Sparkles,
-  SparklesIcon,
-  Wand2Icon,
-} from "lucide-react";
+import { MoreHorizontalIcon, Wand2Icon } from "lucide-react";
 import {
   AIConversation,
   AIConversationContent,
@@ -44,8 +37,6 @@ import { Skeleton } from "@workspace/ui/components/skeleton";
 import { Label } from "@workspace/ui/components/label";
 import { Textarea } from "@workspace/ui/components/textarea";
 import { toast } from "@workspace/ui/components/toast";
-import { Card, CardContent } from "@workspace/ui/components/card";
-import { Separator } from "@workspace/ui/components/separator";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required").trim(),
@@ -93,7 +84,7 @@ export const ConversationIdView = ({
     } catch (error) {
       toast.add({
         type: "error",
-        description: "Something Went Wrong",
+        description: "Something went wrong",
         priority: "high",
       });
       console.error(error);
