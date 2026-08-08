@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   const o = {
-      WIDGET_URL: "https://agentsupport-widget.vercel.app",
+      WIDGET_URL: "http://localhost:3001",
       DEFAULT_POSITION: "bottom-right",
     },
     u = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -51,7 +51,7 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: #3b82f6;
+      background: #069669;
       color: white;
       border: none;
       cursor: pointer;
@@ -59,7 +59,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 24px rgba(59, 130, 246, 0.35);
+      box-shadow: 0 4px 24px rgba(6, 150, 105, 0.35);
       transition: all 0.2s ease;
     `),
         e.addEventListener("click", y),
@@ -140,7 +140,7 @@
           t && (t.style.display = "none");
         }, 300),
         (e.innerHTML = u),
-        (e.style.background = "#3b82f6"));
+        (e.style.background = "#069669"));
     }
     function x() {
       (window.removeEventListener("message", f),

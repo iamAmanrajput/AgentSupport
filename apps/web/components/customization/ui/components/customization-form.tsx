@@ -27,6 +27,8 @@ import { api } from "@workspace/backend/_generated/api";
 import { VapiFormFields } from "./vapi-form-fields";
 import { FormSchema } from "../../types";
 import { widgetSettingsSchema } from "../../schemas";
+import { Loader2, MessageSquareText, PhoneCall, Sparkles } from "lucide-react";
+import { Badge } from "@workspace/ui/components/badge";
 
 type WidgetSettings = Doc<"widgetSettings">;
 
@@ -93,12 +95,19 @@ export const CustomizationForm = ({
   return (
     <Form {...form}>
       <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-        <Card>
+        <Card className="border-muted-foreground/10 shadow-sm">
           <CardHeader>
-            <CardTitle>General Chat Settings</CardTitle>
-            <CardDescription>
-              Configure basic chat widget behavior and messages
-            </CardDescription>
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+                <MessageSquareText className="h-4.5 w-4.5 text-primary" />
+              </div>
+              <div>
+                <CardTitle>General Chat Settings</CardTitle>
+                <CardDescription>
+                  Configure basic chat widget behavior and messages
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-6">
             <FormField
@@ -112,6 +121,7 @@ export const CustomizationForm = ({
                       {...field}
                       placeholder="Welcome message shown when chat open"
                       rows={3}
+                      className="resize-none focus-visible:ring-primary/30"
                     />
                   </FormControl>
                   <FormDescription>
@@ -125,75 +135,71 @@ export const CustomizationForm = ({
             <Separator />
 
             <div className="space-y-4">
-              <div>
-                <h3 className="mb-4 text-sm">Default Suggestions</h3>
-                <p className="mb-4 text-sm text-muted-foreground">
-                  Quick reply suggestions shown to customers to help guide the
-                  conversation
-                </p>
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-muted-foreground" />
+                <h3 className="text-sm font-medium">Default Suggestions</h3>
+                <Badge variant="secondary" className="ml-auto font-normal">
+                  3 quick replies
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Quick reply suggestions shown to customers to help guide the
+                conversation
+              </p>
 
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="defaultSuggestions.suggestion1"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Suggestion 1</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="e.g., How do I get started?"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="defaultSuggestions.suggestion2"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Suggestion 2</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="e.g., What are your pricing plans?"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="defaultSuggestions.suggestion3"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Suggestion 3</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="e.g., I need help with my account"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              <div className="space-y-3 rounded-xl border border-dashed border-muted-foreground/20 bg-muted/30 p-4">
+                {(["suggestion1", "suggestion2", "suggestion3"] as const).map(
+                  (name, i) => (
+                    <FormField
+                      key={name}
+                      control={form.control}
+                      name={`defaultSuggestions.${name}`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
+                              {i + 1}
+                            </span>
+                            Suggestion {i + 1}
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder={
+                                [
+                                  "e.g., How do I get started?",
+                                  "e.g., What are your pricing plans?",
+                                  "e.g., I need help with my account",
+                                ][i]
+                              }
+                              className="bg-background focus-visible:ring-primary/30"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
 
         {hasVapiPlugin && (
-          <Card>
+          <Card className="border-muted-foreground/10 shadow-sm">
             <CardHeader>
-              <CardTitle>Voice Assistant Settings</CardTitle>
-              <CardDescription>
-                Configure voice calling features powered by Vapi
-              </CardDescription>
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+                  <PhoneCall className="h-4.5 w-4.5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle>Voice Assistant Settings</CardTitle>
+                  <CardDescription>
+                    Configure voice calling features powered by Vapi
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <VapiFormFields form={form} />
@@ -201,9 +207,20 @@ export const CustomizationForm = ({
           </Card>
         )}
 
-        <div className="flex justify-end">
-          <Button disabled={form.formState.isSubmitting} type="submit">
-            Save Settings
+        <div className="sticky bottom-0 -mx-1 flex justify-end rounded-2xl border-t bg-background/80 px-1 py-4 backdrop-blur supports-backdrop-filter:bg-background/60">
+          <Button
+            disabled={form.formState.isSubmitting}
+            type="submit"
+            className="min-w-32"
+          >
+            {form.formState.isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Settings"
+            )}
           </Button>
         </div>
       </form>

@@ -131,7 +131,7 @@ const WidgetChatScreen = () => {
           <MenuIcon />
         </Button>
       </WidgetHeader>
-      <AIConversation>
+      <AIConversation className="bg-pattern">
         <AIConversationContent>
           <InfiniteScrollTrigger
             canLoadMore={canLoadMore}

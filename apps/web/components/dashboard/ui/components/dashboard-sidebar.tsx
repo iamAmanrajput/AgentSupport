@@ -27,6 +27,7 @@ import {
   SidebarRail,
 } from "@workspace/ui/components/sidebar";
 import { cn } from "@workspace/ui/lib/utils";
+import SidebarHelpButton from "./sidebar-help-button";
 
 const customerSupportItems = [
   {
@@ -81,7 +82,7 @@ const DashboardSidebar = () => {
   return (
     <Sidebar className="group" collapsible="icon">
       {/* Organization */}
-      <SidebarHeader>
+      <SidebarHeader className="border-b">
         <SidebarMenu>
           <SidebarMenuItem>
             <OrganizationSwitcher
@@ -92,13 +93,13 @@ const DashboardSidebar = () => {
                   rootBox: "w-full! h-8!",
                   avatarBox: "size-4! rounded-sm!",
                   organizationSwitcherTrigger:
-                    "w-full! justify-start! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!",
+                    "w-full! justify-start! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! !rounded-xl !bg-secondary p-2!",
                   organizationPreview:
                     "group-data-[collapsible=icon]:justify-center! gap-2!",
                   organizationPreviewTextContainer:
-                    "group-data-[collapsible=icon]:hidden! text-xs! font-medium! text-sidebar-foreground!",
+                    "group-data-[collapsible=icon]:hidden! text-xs! font-medium! hover:text-primary!",
                   organizationSwitcherTriggerIcon:
-                    "group-data-[collapsible=icon]:hidden! ml-auto! text-sidebar-foreground!",
+                    "group-data-[collapsible=icon]:hidden! ml-auto! hover:text-primary! ",
                 },
               }}
             />
@@ -109,7 +110,9 @@ const DashboardSidebar = () => {
       <SidebarContent>
         {/* Customer Support */}
         <SidebarGroup>
-          <SidebarGroupLabel>Customer Support</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-bold text-primary">
+            Customer Support
+          </SidebarGroupLabel>
 
           <SidebarGroupContent>
             <SidebarMenu>
@@ -119,13 +122,16 @@ const DashboardSidebar = () => {
                     render={<Link href={item.url} />}
                     isActive={isActive(item.url)}
                     className={cn(
-                      isActive(item.url) &&
-                        "bg-linear-to-b from-sidebar-primary to-[#72e3ad]! text-sidebar-primary-foreground! hover:to-[#72e3ad]/90!"
+                      isActive(item.url)
+                        ? "bg-primary! text-sidebar-primary-foreground! duration-300! hover:bg-primary/90!"
+                        : "text-sidebar-foreground/80! hover:bg-secondary! hover:text-primary!"
                     )}
                     tooltip={item.title}
                   >
-                    <item.icon className="size-4" />
-                    <span>{item.title}</span>
+                    <item.icon
+                      className={`size-4 ${isActive(item.url ? "opacity-100" : "opacity-80")}`}
+                    />
+                    <span className="text-sm">{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -135,7 +141,9 @@ const DashboardSidebar = () => {
 
         {/* Configuration */}
         <SidebarGroup>
-          <SidebarGroupLabel>Configuration</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-bold text-primary">
+            Configuration
+          </SidebarGroupLabel>
 
           <SidebarGroupContent>
             <SidebarMenu>
@@ -145,13 +153,16 @@ const DashboardSidebar = () => {
                     render={<Link href={item.url} />}
                     isActive={isActive(item.url)}
                     className={cn(
-                      isActive(item.url) &&
-                        "bg-linear-to-b from-sidebar-primary to-[#72e3ad]! text-sidebar-primary-foreground! hover:to-[#72e3ad]/90!"
+                      isActive(item.url)
+                        ? "bg-primary! text-sidebar-primary-foreground! duration-300! hover:bg-primary/90!"
+                        : "text-sidebar-foreground/80! hover:bg-secondary! hover:text-primary!"
                     )}
                     tooltip={item.title}
                   >
-                    <item.icon className="size-4" />
-                    <span>{item.title}</span>
+                    <item.icon
+                      className={`size-4 ${isActive(item.url ? "opacity-100" : "opacity-80")}`}
+                    />
+                    <span className="text-sm">{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -161,7 +172,9 @@ const DashboardSidebar = () => {
 
         {/* Account */}
         <SidebarGroup>
-          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-bold text-primary">
+            Account
+          </SidebarGroupLabel>
 
           <SidebarGroupContent>
             <SidebarMenu>
@@ -171,13 +184,16 @@ const DashboardSidebar = () => {
                     render={<Link href={item.url} />}
                     isActive={isActive(item.url)}
                     className={cn(
-                      isActive(item.url) &&
-                        "bg-linear-to-b from-sidebar-primary to-[#72e3ad]! text-sidebar-primary-foreground! hover:to-[#72e3ad]/90!"
+                      isActive(item.url)
+                        ? "bg-primary! text-sidebar-primary-foreground! duration-300! hover:bg-primary/90!"
+                        : "text-sidebar-foreground/80! hover:bg-secondary! hover:text-primary!"
                     )}
                     tooltip={item.title}
                   >
-                    <item.icon className="size-4" />
-                    <span>{item.title}</span>
+                    <item.icon
+                      className={`size-4 ${isActive(item.url ? "opacity-100" : "opacity-80")}`}
+                    />
+                    <span className="text-sm">{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -187,7 +203,8 @@ const DashboardSidebar = () => {
       </SidebarContent>
 
       {/* User */}
-      <SidebarFooter>
+      <SidebarFooter className="border">
+        <SidebarHelpButton />
         <SidebarMenu>
           <SidebarMenuItem>
             <UserButton
@@ -196,9 +213,9 @@ const DashboardSidebar = () => {
                 elements: {
                   rootBox: "w-full! h-8!",
                   userButtonTrigger:
-                    "w-full! p-2! hover:bg-sidebar-accent! hover:text-sidebar-accent-foreground! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!",
+                    "w-full! p-2! bg-secondary! rounded-lg! hover:bg-sidebar-accent! hover:text-primary! group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!",
                   userButtonBox:
-                    "w-full! flex-row-reverse! justify-end! gap-2! group-data-[collapsible=icon]:justify-center! text-sidebar-foreground!",
+                    "w-full! flex-row-reverse! justify-end! gap-2! group-data-[collapsible=icon]:justify-center! hover:text-primary!",
                   userButtonOuterIdentifier:
                     "pl-0! group-data-[collapsible=icon]:hidden!",
                   avatarBox: "size-4!",

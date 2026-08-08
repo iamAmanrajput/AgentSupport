@@ -3,7 +3,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@workspace/ui/components/button";
-import { Field, FieldError, FieldLabel } from "@workspace/ui/components/field";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 
 import { WidgetHeader } from "../components/WidgetHeader";
@@ -11,7 +17,6 @@ import {
   visitorFormSchema,
   visitorFormSchemaType,
 } from "../../schemas/authSchema";
-import { WidgetFooter } from "../components/WidgetFooter";
 import { useMutation } from "convex/react";
 import { api } from "@workspace/backend/_generated/api";
 import { Doc } from "@workspace/backend/_generated/dataModel";
@@ -19,11 +24,7 @@ import { setContactSessionId, setScreen } from "@/redux/slices/widgetSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
 const WidgetAuthScreen = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<visitorFormSchemaType>({
+  const form = useForm<visitorFormSchemaType>({
     resolver: zodResolver(visitorFormSchema),
     defaultValues: {
       name: "",
@@ -75,46 +76,61 @@ const WidgetAuthScreen = () => {
     <>
       <WidgetHeader>
         <div className="flex flex-col justify-between gap-y-2 px-2 py-6 font-semibold">
-          <p className="text-3xl">Hi there! 👋</p>
-          <p className="text-lg">How can we help you today?</p>
+          <p className="flex items-center gap-2 font-heading text-3xl">
+            Hi there!
+          </p>
+
+          <p className="text-lg font-medium">How can we help you today?</p>
         </div>
       </WidgetHeader>
-
-      <form
-        className="flex flex-1 flex-col gap-y-4 p-4"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Field>
-          <FieldLabel htmlFor="name" className="font-medium">
-            Full Name
-          </FieldLabel>
-          <Input
-            {...register("name")}
-            className="h-10 bg-background placeholder:text-muted-foreground/60"
-            placeholder="Enter your full name"
-            type="text"
+      <Form {...form}>
+        <form
+          className="flex flex-1 flex-col gap-y-4 p-4"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    className="h-10 bg-background"
+                    placeholder="e.g. John Doe"
+                    type="text"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <FieldError errors={[errors.name]} />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="email" className="font-medium">
-            Email Address
-          </FieldLabel>
-          <Input
-            {...register("email")}
-            className="h-10 bg-background placeholder:text-muted-foreground/60"
-            placeholder="Enter your email address"
-            type="email"
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    className="h-10 bg-background"
+                    placeholder="e.g. john.doe@example.com"
+                    type="email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <FieldError errors={[errors.email]} />
-        </Field>
-
-        <Button disabled={isSubmitting} size="lg" type="submit">
-          Continue
-        </Button>
-      </form>
-      <WidgetFooter />
+          <Button
+            disabled={form.formState.isSubmitting}
+            size="lg"
+            type="submit"
+          >
+            Continue
+          </Button>
+        </form>
+      </Form>
     </>
   );
 };

@@ -29,7 +29,7 @@ const WidgetView = ({ organizationId }: Props) => {
     contact: <WidgetContactScreen />,
   };
   return (
-    <main className="flex h-full w-full flex-col overflow-hidden rounded-xl border bg-muted">
+    <main className="flex h-full w-full flex-col overflow-hidden rounded-xl border bg-secondary/20">
       {screenComponents[screen]}
     </main>
   );

@@ -77,39 +77,66 @@ export const FilesView = () => {
         onOpenChange={setUploadDialogOpen}
         open={uploadDialogOpen}
       />
-      <div className="flex min-h-screen flex-col bg-muted p-8">
-        <div className="mx-auto w-full max-w-3xl">
+      <div className="flex min-h-screen flex-col bg-secondary/20 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-4xl">
           <div className="space-y-2">
-            <h1 className="text-2xl md:text-4xl">Knowledge Base</h1>
-            <p className="text-muted-foreground">
+            <h1 className="font-heading text-2xl font-semibold tracking-tight text-primary md:text-3xl">
+              Knowledge Base
+            </h1>
+
+            <p className="text-xs font-bold text-muted-foreground md:text-base">
               Upload and manage documents for your AI assistant
             </p>
           </div>
 
-          <div className="mt-8 rounded-lg border bg-background">
-            <div className="flex items-center justify-end border-b px-6 py-4">
-              <Button onClick={() => setUploadDialogOpen(true)}>
-                <PlusIcon />
+          <div className="mt-8 overflow-hidden rounded-xl border bg-background shadow-sm">
+            <div className="flex items-center justify-between border-b bg-muted/20 px-5 py-4 sm:px-6">
+              <div>
+                <h2 className="text-sm font-semibold">Documents</h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Manage your knowledge base files
+                </p>
+              </div>
+
+              <Button
+                className="gap-2 shadow-sm"
+                onClick={() => setUploadDialogOpen(true)}
+              >
+                <PlusIcon className="size-4" />
                 Add New
               </Button>
             </div>
+
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="px-6 py-4 font-medium">Name</TableHead>
-                  <TableHead className="px-6 py-4 font-medium">Type</TableHead>
-                  <TableHead className="px-6 py-4 font-medium">Size</TableHead>
-                  <TableHead className="px-6 py-4 font-medium">
+                <TableRow className="bg-muted/30 hover:bg-muted/30">
+                  <TableHead className="px-5 py-3.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase sm:px-6">
+                    Name
+                  </TableHead>
+
+                  <TableHead className="px-5 py-3.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase sm:px-6">
+                    Type
+                  </TableHead>
+
+                  <TableHead className="px-5 py-3.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase sm:px-6">
+                    Size
+                  </TableHead>
+
+                  <TableHead className="px-5 py-3.5 text-right text-xs font-semibold tracking-wide text-muted-foreground uppercase sm:px-6">
                     Actions
                   </TableHead>
                 </TableRow>
               </TableHeader>
+
               <TableBody>
                 {(() => {
                   if (isLoadingFirstPage) {
                     return (
                       <TableRow>
-                        <TableCell className="h-24 text-center" colSpan={4}>
+                        <TableCell
+                          className="h-32 text-center text-sm text-muted-foreground"
+                          colSpan={4}
+                        >
                           Loading files...
                         </TableCell>
                       </TableRow>
@@ -119,7 +146,10 @@ export const FilesView = () => {
                   if (files.results.length === 0) {
                     return (
                       <TableRow>
-                        <TableCell className="h-24 text-center" colSpan={4}>
+                        <TableCell
+                          className="h-32 text-center text-sm text-muted-foreground"
+                          colSpan={4}
+                        >
                           No files found
                         </TableCell>
                       </TableRow>
@@ -127,52 +157,70 @@ export const FilesView = () => {
                   }
 
                   return files.results.map((file) => (
-                    <TableRow className="hover:bg-muted/50" key={file.id}>
-                      <TableCell className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <FileIcon />
-                          {file.name}
+                    <TableRow
+                      className="group transition-colors hover:bg-muted/30"
+                      key={file.id}
+                    >
+                      <TableCell className="px-5 py-4 sm:px-6">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border bg-muted/40 text-muted-foreground transition-colors group-hover:bg-background group-hover:text-foreground">
+                            <FileIcon className="size-4" />
+                          </div>
+
+                          <span className="truncate text-sm font-medium">
+                            {file.name}
+                          </span>
                         </div>
                       </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <Badge className="uppercase" variant="outline">
+
+                      <TableCell className="px-5 py-4 sm:px-6">
+                        <Badge
+                          className="rounded-md px-2 py-0.5 text-[10px] font-medium tracking-wide uppercase"
+                          variant="outline"
+                        >
                           {file.type}
                         </Badge>
                       </TableCell>
-                      <TableCell className="px-6 py-4 text-muted-foreground">
+
+                      <TableCell className="px-5 py-4 text-sm text-muted-foreground sm:px-6">
                         {file.size}
                       </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger
-                            render={
-                              <Button
-                                className="size-8 p-0"
-                                size="sm"
-                                variant="ghost"
+
+                      <TableCell className="px-5 py-4 sm:px-6">
+                        <div className="flex justify-end">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger
+                              render={
+                                <Button
+                                  className="size-8 rounded-lg p-0 text-muted-foreground opacity-70 transition-opacity group-hover:opacity-100 hover:text-foreground"
+                                  size="sm"
+                                  variant="ghost"
+                                >
+                                  <MoreHorizontalIcon className="size-4" />
+                                </Button>
+                              }
+                            />
+
+                            <DropdownMenuContent align="end" className="w-36">
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => handleDeleteClick(file)}
                               >
-                                <MoreHorizontalIcon />
-                              </Button>
-                            }
-                          />
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              className="text-destructive"
-                              onClick={() => handleDeleteClick(file)}
-                            >
-                              <TrashIcon className="mr-2 size-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                                <TrashIcon className="mr-2 size-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ));
                 })()}
               </TableBody>
             </Table>
+
             {!isLoadingFirstPage && files.results.length > 0 && (
-              <div className="border-t">
+              <div className="border-t bg-muted/10">
                 <InfiniteScrollTrigger
                   canLoadMore={canLoadMore}
                   isLoadingMore={isLoadingMore}

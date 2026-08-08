@@ -229,11 +229,13 @@ export const VapiView = () => {
     <>
       <VapiPluginForm open={connectOpen} setOpen={setConnectOpen} />
       <VapiPluginRemoveForm open={removeOpen} setOpen={setRemoveOpen} />
-      <div className="flex min-h-screen flex-col bg-muted p-8">
+      <div className="flex min-h-screen flex-col bg-secondary/20 p-8">
         <div className="mx-auto w-full max-w-3xl">
           <div className="space-y-2">
-            <h1 className="text-2xl md:text-4xl">Vapi Plugin</h1>
-            <p className="text-muted-foreground">
+            <h1 className="font-heading text-2xl text-primary md:text-4xl">
+              Vapi Plugin
+            </h1>
+            <p className="text-xs font-bold text-muted-foreground md:text-base">
               Connect Vapi to enable AI voice calls and phone support
             </p>
           </div>

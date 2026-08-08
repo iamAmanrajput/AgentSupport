@@ -79,7 +79,7 @@ export const ConversationsPanel = () => {
   });
 
   return (
-    <div className="flex h-full w-full flex-col bg-background text-sidebar-foreground">
+    <div className="flex h-full w-full flex-col bg-secondary/20 text-sidebar-foreground">
       <div className="flex flex-col gap-3.5 border-b p-2">
         <Select
           defaultValue="all"
@@ -156,9 +156,9 @@ export const ConversationsPanel = () => {
                 <Link
                   key={conversation._id}
                   className={cn(
-                    "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
+                    "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight duration-300 hover:rounded-xl hover:bg-secondary hover:text-primary",
                     pathname === `/conversations/${conversation._id}` &&
-                      "bg-accent text-accent-foreground"
+                      "rounded-xl bg-secondary text-primary shadow-lg"
                   )}
                   href={`/conversations/${conversation._id}`}
                 >

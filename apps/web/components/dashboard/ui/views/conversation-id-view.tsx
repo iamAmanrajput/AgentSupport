@@ -15,6 +15,7 @@ import {
 } from "@workspace/ui/components/ai/conversation";
 import {
   AIInput,
+  AIInputButton,
   AIInputSubmit,
   AIInputTextarea,
   AIInputToolbar,
@@ -25,18 +26,16 @@ import {
   AIMessageContent,
 } from "@workspace/ui/components/ai/message";
 import { AIResponse } from "@workspace/ui/components/ai/response";
-import { Field, FieldError } from "@workspace/ui/components/field";
 import { z } from "zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DicebearAvatar } from "@workspace/ui/components/dicebar-avatar";
 import { ConversationStatusButton } from "../components/conversation-status-button";
 import { useState } from "react";
 import { cn } from "@workspace/ui/lib/utils";
 import { Skeleton } from "@workspace/ui/components/skeleton";
-import { Label } from "@workspace/ui/components/label";
-import { Textarea } from "@workspace/ui/components/textarea";
 import { toast } from "@workspace/ui/components/toast";
+import { Form, FormField } from "@workspace/ui/components/form";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message is required").trim(),
@@ -159,7 +158,7 @@ export const ConversationIdView = ({
           />
         )}
       </header>
-      <AIConversation className="max-h-[calc(100vh-180px)]">
+      <AIConversation className="bg-pattern max-h-[calc(100vh-180px)]">
         <AIConversationContent>
           <InfiniteScrollTrigger
             canLoadMore={canLoadMore}
@@ -195,68 +194,62 @@ export const ConversationIdView = ({
       </AIConversation>
 
       <div className="p-2">
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <Controller
-            control={form.control}
-            name="message"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <Label htmlFor="message">Message</Label>
-
-                <Textarea
-                  id="message"
-                  {...field}
+        <Form {...form}>
+          <AIInput onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              disabled={conversation?.status === "resolved"}
+              name="message"
+              render={({ field }) => (
+                <AIInputTextarea
                   disabled={
                     conversation?.status === "resolved" ||
                     form.formState.isSubmitting ||
                     isEnhancing
                   }
-                  placeholder={
-                    conversation?.status === "resolved"
-                      ? "This conversation has been resolved"
-                      : "Type your response as an operator..."
-                  }
+                  onChange={field.onChange}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault();
                       form.handleSubmit(onSubmit)();
                     }
                   }}
+                  placeholder={
+                    conversation?.status === "resolved"
+                      ? "This conversation has been resolved"
+                      : "Type your response as an operator..."
+                  }
+                  value={field.value}
                 />
-
-                {fieldState.error && <FieldError errors={[fieldState.error]} />}
-              </Field>
-            )}
-          />
-
-          <div className="flex items-center justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleEnhanceResponse}
-              disabled={
-                conversation?.status === "resolved" ||
-                isEnhancing ||
-                !form.formState.isValid
-              }
-            >
-              <Wand2Icon className="mr-2 h-4 w-4" />
-              {isEnhancing ? "Enhancing..." : "Enhance"}
-            </Button>
-
-            <Button
-              type="submit"
-              disabled={
-                conversation?.status === "resolved" ||
-                !form.formState.isValid ||
-                form.formState.isSubmitting ||
-                isEnhancing
-              }
-            >
-              Send
-            </Button>
-          </div>
-        </form>
+              )}
+            />
+            <AIInputToolbar>
+              <AIInputTools>
+                <AIInputButton
+                  onClick={handleEnhanceResponse}
+                  disabled={
+                    conversation?.status === "resolved" ||
+                    isEnhancing ||
+                    !form.formState.isValid
+                  }
+                >
+                  <Wand2Icon />
+                  {isEnhancing ? "Enhancing..." : "Enhance"}
+                </AIInputButton>
+              </AIInputTools>
+              <AIInputSubmit
+                disabled={
+                  conversation?.status === "resolved" ||
+                  !form.formState.isValid ||
+                  form.formState.isSubmitting ||
+                  isEnhancing
+                }
+                status="ready"
+                type="submit"
+              />
+            </AIInputToolbar>
+          </AIInput>
+        </Form>
       </div>
     </div>
   );
@@ -264,13 +257,13 @@ export const ConversationIdView = ({
 
 export const ConversationIdViewLoading = () => {
   return (
-    <div className="flex h-full flex-col bg-muted">
+    <div className="flex h-full flex-col">
       <header className="flex items-center justify-between border-b bg-background p-2.5">
         <Button disabled size="sm" variant="ghost">
           <MoreHorizontalIcon />
         </Button>
       </header>
-      <AIConversation className="max-h-[calc(100vh-180px)]">
+      <AIConversation className="bg-pattern max-h-[calc(100vh-180px)]">
         <AIConversationContent>
           {Array.from({ length: 8 }, (_, index) => {
             const isUser = index % 2 === 0;

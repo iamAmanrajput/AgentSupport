@@ -2,8 +2,8 @@
 
 import { api } from "@workspace/backend/_generated/api";
 import { useQuery } from "convex/react";
-import { Loader2Icon } from "lucide-react";
 import { CustomizationForm } from "../components/customization-form";
+import Spinner from "@/components/shared/spinner";
 
 export const CustomizationView = () => {
   const widgetSettings = useQuery(api.private.widgetSettings.getOne);
@@ -13,19 +13,20 @@ export const CustomizationView = () => {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-y-2 bg-muted p-8">
-        <Loader2Icon className="animate-spin text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">Loading settings...</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-y-2 bg-secondary/20 p-8">
+        <Spinner size={60} />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted p-8">
+    <div className="flex min-h-screen flex-col bg-secondary/20 p-8">
       <div className="mx-auto w-full max-w-3xl">
         <div className="space-y-2">
-          <h1 className="text-2xl md:text-4xl">Widget Customization</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-heading text-2xl text-primary md:text-4xl">
+            Widget Customization
+          </h1>
+          <p className="text-xs font-bold text-muted-foreground md:text-base">
             Customize how your chat widget looks and behaves for your customers
           </p>
         </div>

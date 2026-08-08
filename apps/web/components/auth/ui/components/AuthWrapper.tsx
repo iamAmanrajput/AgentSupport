@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
-import { Authenticated, Unauthenticated, AuthLoading } from "convex/react"
-import { AuthLayout } from "../layouts/AuthLayout"
-import SignIn from "@/app/(auth)/sign-in/[[...sign-in]]/page"
+import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { AuthLayout } from "../layouts/AuthLayout";
+import SignIn from "@/app/(auth)/sign-in/[[...sign-in]]/page";
+import Spinner from "@/components/shared/spinner";
 
 export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -10,7 +11,7 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
       {/* Show loading UI while Convex is checking the authentication state */}
       <AuthLoading>
         <AuthLayout>
-          <p>Loading...</p>
+          <Spinner size={70} />
         </AuthLayout>
       </AuthLoading>
 
@@ -24,5 +25,5 @@ export const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
         </AuthLayout>
       </Unauthenticated>
     </>
-  )
-}
+  );
+};
