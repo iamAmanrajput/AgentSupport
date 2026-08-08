@@ -1,14 +1,18 @@
-import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import type { StorageActionWriter } from "convex/server";
 import { assert } from "convex-helpers";
 import { Id } from "../_generated/dataModel";
-import { GEMINI_GENERATION_MODEL } from "../constants/models";
+import {
+  BEDROCK_GENERATION_MODEL,
+  GENERATION_MODEL,
+} from "../constants/models";
+import { bedrock } from "@ai-sdk/amazon-bedrock";
+import { groq } from "@ai-sdk/groq";
 
 const AI_MODELS = {
-  image: google(GEMINI_GENERATION_MODEL),
-  pdf: google(GEMINI_GENERATION_MODEL),
-  html: google(GEMINI_GENERATION_MODEL),
+  image: groq(GENERATION_MODEL),
+  pdf: groq(GENERATION_MODEL),
+  html: groq(GENERATION_MODEL),
 } as const;
 
 const SUPPORTED_IMAGE_TYPES = [

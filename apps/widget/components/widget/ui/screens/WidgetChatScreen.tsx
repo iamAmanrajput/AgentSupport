@@ -139,31 +139,27 @@ const WidgetChatScreen = () => {
             onLoadMore={handleLoadMore}
             ref={topElementRef}
           />
-          {toUIMessages(messages.results ?? [])?.map((message) => {
-            return (
-              <AIMessage
-                from={message.role === "user" ? "user" : "assistant"}
-                key={message.id}
-              >
-                <AIMessageContent>
-                  {message.parts.map((part, index) => {
-                    if (part.type === "text") {
-                      return <AIResponse key={index}>{part.text}</AIResponse>;
-                    }
-
-                    return null;
-                  })}
-                </AIMessageContent>
-                {message.role === "assistant" && (
-                  <DicebearAvatar
-                    imageUrl="/logo.svg"
-                    seed="assistant"
-                    size={32}
-                  />
-                )}
-              </AIMessage>
-            );
-          })}
+          {toUIMessages(messages.results ?? [])
+            ?.filter((message) => message.text?.trim())
+            .map((message) => {
+              return (
+                <AIMessage
+                  from={message.role === "user" ? "user" : "assistant"}
+                  key={message.id}
+                >
+                  <AIMessageContent>
+                    <AIResponse>{message.text}</AIResponse>
+                  </AIMessageContent>
+                  {message.role === "assistant" && (
+                    <DicebearAvatar
+                      imageUrl="/logo.svg"
+                      seed="assistant"
+                      size={32}
+                    />
+                  )}
+                </AIMessage>
+              );
+            })}
         </AIConversationContent>
       </AIConversation>
       {toUIMessages(messages.results ?? [])?.length === 1 && (

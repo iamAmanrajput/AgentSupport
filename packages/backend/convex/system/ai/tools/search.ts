@@ -1,4 +1,3 @@
-import { google } from "@ai-sdk/google";
 import { createTool } from "@convex-dev/agent";
 import { generateText } from "ai";
 import z from "zod";
@@ -6,7 +5,12 @@ import { internal } from "../../../_generated/api";
 import { supportAgent } from "../agents/supportAgent";
 import rag from "../../rag";
 import { SEARCH_INTERPRETER_PROMPT } from "../constants";
-import { GEMINI_GENERATION_MODEL } from "../../../constants/models";
+import {
+  BEDROCK_GENERATION_MODEL,
+  GENERATION_MODEL,
+} from "../../../constants/models";
+import { bedrock } from "@ai-sdk/amazon-bedrock";
+import { groq } from "@ai-sdk/groq";
 
 export const search = createTool({
   description:
@@ -52,7 +56,7 @@ export const search = createTool({
           content: `User asked: "${args.query}"\n\nSearch results: ${contextText}`,
         },
       ],
-      model: google(GEMINI_GENERATION_MODEL),
+      model: groq(GENERATION_MODEL),
     });
 
     await supportAgent.saveMessage(ctx, {

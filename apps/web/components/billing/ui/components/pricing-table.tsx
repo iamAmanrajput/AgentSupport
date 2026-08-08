@@ -8,6 +8,7 @@ const PricingTable = () => {
       <div className="w-full max-w-5xl">
         <ClerkPricingTable
           for="organization"
+          newSubscriptionRedirectUrl="/pricing"
           appearance={{
             variables: {
               colorPrimary: "#069669",
