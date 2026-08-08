@@ -64,7 +64,7 @@ const WidgetInboxScreen = () => {
               key={conversation._id}
               onClick={() => {
                 dispatch(setConversationId(conversation._id));
-                setScreen("chat");
+                dispatch(setScreen("chat"));
               }}
               variant="outline"
             >
@@ -94,7 +94,6 @@ const WidgetInboxScreen = () => {
           ref={topElementRef}
         />
       </div>
-
       <WidgetFooter />
     </>
   );

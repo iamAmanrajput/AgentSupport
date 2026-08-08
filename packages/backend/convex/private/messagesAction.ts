@@ -5,7 +5,8 @@ import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import { OPERATOR_MESSAGE_ENHANCEMENT_PROMPT } from "../system/ai/constants";
 import { internal } from "../_generated/api";
-import { GEMINI_GENERATION_MODEL } from "../constants/models";
+import { GENERATION_MODEL } from "../constants/models";
+import { groq } from "@ai-sdk/groq";
 
 export const enhanceResponse = action({
   args: {
@@ -45,7 +46,7 @@ export const enhanceResponse = action({
     }
 
     const response = await generateText({
-      model: google(GEMINI_GENERATION_MODEL),
+      model: groq(GENERATION_MODEL),
       messages: [
         {
           role: "system",

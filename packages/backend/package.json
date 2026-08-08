@@ -14,8 +14,9 @@
     "typescript": "latest"
   },
   "dependencies": {
-    "@ai-sdk/google": "3.0.103",
-    "@ai-sdk/groq": "3.0.52",
+    "@ai-sdk/amazon-bedrock": "4.0.148",
+    "@ai-sdk/google": "3.0.104",
+    "@ai-sdk/groq": "3.0.56",
     "@aws-sdk/client-secrets-manager": "^3.1102.0",
     "@clerk/backend": "^3.15.1",
     "@clerk/nextjs": "^7.6.2",
