@@ -129,7 +129,9 @@ const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <item.icon
-                      className={`size-4 ${isActive(item.url ? "opacity-100" : "opacity-80")}`}
+                      className={`size-4 ${
+                        isActive(item.url) ? "opacity-100" : "opacity-80"
+                      }`}
                     />
                     <span className="text-sm">{item.title}</span>
                   </SidebarMenuButton>
@@ -160,7 +162,9 @@ const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <item.icon
-                      className={`size-4 ${isActive(item.url ? "opacity-100" : "opacity-80")}`}
+                      className={`size-4 ${
+                        isActive(item.url) ? "opacity-100" : "opacity-80"
+                      }`}
                     />
                     <span className="text-sm">{item.title}</span>
                   </SidebarMenuButton>
@@ -191,7 +195,9 @@ const DashboardSidebar = () => {
                     tooltip={item.title}
                   >
                     <item.icon
-                      className={`size-4 ${isActive(item.url ? "opacity-100" : "opacity-80")}`}
+                      className={`size-4 ${
+                        isActive(item.url) ? "opacity-100" : "opacity-80"
+                      }`}
                     />
                     <span className="text-sm">{item.title}</span>
                   </SidebarMenuButton>
