@@ -71,9 +71,6 @@ importers:
       '@workspace/backend':
         specifier: workspace:*
         version: link:../../packages/backend
-      '@workspace/math':
-        specifier: workspace:*
-        version: link:../../packages/math
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -180,9 +177,6 @@ importers:
       '@workspace/backend':
         specifier: workspace:*
         version: link:../../packages/backend
-      '@workspace/math':
-        specifier: workspace:*
-        version: link:../../packages/math
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -350,15 +344,6 @@ importers:
       typescript-eslint:
         specifier: ^8.60.0
         version: 8.60.0(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
-
-  packages/math:
-    devDependencies:
-      '@workspace/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      typescript:
-        specifier: latest
-        version: 7.0.2
 
   packages/typescript-config: {}
 
