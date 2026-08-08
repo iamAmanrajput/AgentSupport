@@ -1,14 +1,14 @@
-import { OrganizationList } from "@clerk/nextjs"
+import { OrganizationList } from "@clerk/nextjs";
 
 const Page = () => {
   return (
     <OrganizationList
-      afterCreateOrganizationUrl="/"
-      afterSelectOrganizationUrl="/"
+      afterCreateOrganizationUrl="/conversations"
+      afterSelectOrganizationUrl="/conversations"
       hidePersonal
       skipInvitationScreen
     />
-  )
-}
+  );
+};
 
-export default Page
+export default Page;
