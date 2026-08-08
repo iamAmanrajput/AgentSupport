@@ -140,7 +140,12 @@ const WidgetChatScreen = () => {
             ref={topElementRef}
           />
           {toUIMessages(messages.results ?? [])
-            ?.filter((message) => message.text?.trim())
+            ?.filter((message) => {
+              // sirf user aur assistant ke actual text responses chahiye
+              if (message.role !== "user" && message.role !== "assistant")
+                return false;
+              return message.text?.trim();
+            })
             .map((message) => {
               return (
                 <AIMessage
