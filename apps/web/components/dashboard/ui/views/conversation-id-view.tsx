@@ -167,7 +167,11 @@ export const ConversationIdView = ({
             ref={topElementRef}
           />
           {toUIMessages(messages.results ?? [])
-            ?.filter((message) => message.text?.trim())
+            ?.filter((message) => {
+              if (message.role !== "user" && message.role !== "assistant")
+                return false;
+              return message.text?.trim();
+            })
             .map((message) => (
               <AIMessage
                 // In reverse, because we are watching from "assistant" prespective
