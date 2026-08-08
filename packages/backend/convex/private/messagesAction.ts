@@ -1,10 +1,11 @@
 "use node";
 import { ConvexError, v } from "convex/values";
-import { action, mutation } from "../_generated/server";
+import { action } from "../_generated/server";
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import { OPERATOR_MESSAGE_ENHANCEMENT_PROMPT } from "../system/ai/constants";
 import { internal } from "../_generated/api";
+import { GEMINI_GENERATION_MODEL } from "../constants/models";
 
 export const enhanceResponse = action({
   args: {
@@ -44,8 +45,7 @@ export const enhanceResponse = action({
     }
 
     const response = await generateText({
-      // If Not Work Add Gemini
-      model: "gpt-4o-mini",
+      model: google(GEMINI_GENERATION_MODEL),
       messages: [
         {
           role: "system",

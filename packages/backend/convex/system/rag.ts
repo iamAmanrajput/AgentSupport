@@ -1,9 +1,10 @@
 import { google } from "@ai-sdk/google";
 import { RAG } from "@convex-dev/rag";
 import { components } from "../_generated/api";
+import { GEMINI_EMBEDDING_MODEL } from "../constants/models";
 
 const rag = new RAG(components.rag, {
-  textEmbeddingModel: google.embedding("gemini-embedding-001"),
+  textEmbeddingModel: google.embedding(GEMINI_EMBEDDING_MODEL),
   embeddingDimension: 3072,
 });
 

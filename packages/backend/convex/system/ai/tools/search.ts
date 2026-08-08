@@ -6,6 +6,7 @@ import { internal } from "../../../_generated/api";
 import { supportAgent } from "../agents/supportAgent";
 import rag from "../../rag";
 import { SEARCH_INTERPRETER_PROMPT } from "../constants";
+import { GEMINI_GENERATION_MODEL } from "../../../constants/models";
 
 export const search = createTool({
   description:
@@ -51,7 +52,7 @@ export const search = createTool({
           content: `User asked: "${args.query}"\n\nSearch results: ${contextText}`,
         },
       ],
-      model: google.chat("gemini-2.5-pro"),
+      model: google(GEMINI_GENERATION_MODEL),
     });
 
     await supportAgent.saveMessage(ctx, {
